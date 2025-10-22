@@ -1,14 +1,21 @@
 import './App.css'//ADD THIS IN EVERY FOLDER TO USE TAILWIND 
-//npm run dev to run the project
-//npm i for installing all dependencies
-
-
+import React from 'react';
+import Navbar from './components/Navbar.jsx';
+import {Route, Routes, useLocation} from 'react-router-dom';
+import Home from './Pages/Home.jsx'
+import Login from './Pages/Login.jsx';
 function App() {
 
 
   return (
-    <div class=" from-purple-100  to-purple-800 bg-gradient-to-r h-screen flex justify-center items-center">
-      <h1 class="text-4xl font-medium text-center bg-gradient-to-r from-purple-900 via-pink-900 to-purple-200 bg-clip-text text-transparent">HII ZARA ASHA KRTE HN KI APKO KOI PARESHANI NHI HORHI HO </h1>
+    <div>
+      <Navbar />
+      <div className='min-h-[70vh]'>
+        <Routes>
+          <Route path='/' element={<Home/>} />
+          <Route path='/login' element={<Login/>} />
+        </Routes>
+      </div>
     </div>
   )
 }
