@@ -1,9 +1,12 @@
 import React from "react";
-
-//context api ->selectedSeats, setSelectedSeats->[{ label, category, price }],totalPrice, setTotalPrice
 import { UseBooking } from "../../contexts/Useboooking";
+import { useEffect } from "react";
+import { useParams } from "react-router-dom";
+
+
 const Seat_map = ({
 
+        //props with default values
         layout = { rows: 6, seatsPerRow: 6, aisleAfterSeat: 3 },
         seatTypes = {
           available: "bg-gray-500/50",
@@ -11,9 +14,9 @@ const Seat_map = ({
           selected: "bg-blue-500",
         },
         seatPricing = {
-          Business: { rows: [1, 2], price: 8000, style: `bg-[#2DD4BF10]` },
-          Premium: { rows: [3, 4], price: 5000, style: `bg-yellow-500/40` },
-          Economy: { rows: [5, 6], price: 3000, style: `bg-[#e879f940]` },
+          Business: { rows: [1,2], price: 8000, style: `bg-[#2DD4BF10]` },
+          Premium: { rows: [3,4], price: 5000, style: `bg-yellow-500/40` },
+          Economy: { rows: [5,6], price: 3000, style: `bg-[#e879f940]` },
         },
         bookedSeats = ["1B", "2C"],
         MaxSeatSelection = 3,
@@ -21,6 +24,14 @@ const Seat_map = ({
       }) => {
 
         const { bookingData, updateBookingData } = UseBooking();
+
+
+        const { id: flightId } = useParams(); 
+         //  Reset seats when flight changes
+        useEffect(() => {
+          updateBookingData({ seats: [], totalPrice: 0 });
+        }, [flightId]); //  runs when flight id changes
+        
 
         // State to store selected seat objects
        
@@ -81,7 +92,7 @@ const Seat_map = ({
         return (
           <div
             key={rowNumber}
-            className={`flex gap-2 items-center ${seatPricing[className].style}`}
+            className={`flex gap-2 items-center ${seatPricing[className]?.style || ""}`}
           >
             {/* Row Label */}
             <span className="w-4">{rowNumber}</span>
