@@ -8,6 +8,7 @@ const Search = () => {
     const [source, setSource] = useState('');
     const [destination, setDestination] = useState('');
     const [date, setDate] = useState('');
+    const [TotalPassenger, setTotalPassenger]= useState(1);
 
     const [flights, setFlights] = useState(null); // <-- null means "not searched yet"
 
@@ -23,10 +24,14 @@ const Search = () => {
         }
     };
     const navigate=useNavigate();
+
+
     const handleClick = (flightID) => {
-        navigate(`/flight/${flightID}`);
+        navigate(`/flight/${flightID}`,{
+            state:{source,destination,date,TotalPassenger}
+        });
          console.log('Flight ID clicked:', flightID);
-    }
+    }//here i can pass state 
    
     return (
         <form 
@@ -34,11 +39,11 @@ const Search = () => {
             e.preventDefault();
             SearchForFlights(source, destination, date);
         }}
-        className='shadow-2xl/35 mt-40 bg-white/10 border-2 border-cyan-800 text-gray-500 rounded-lg px-20 py-15  flex flex-col md:flex-row max-md:items-start gap-6 max-w-5xl mx-auto'>
+        className='shadow-2xl/35 mt-20 bg-white/10 border-2 border-cyan-800 text-gray-500 rounded-lg px-20 py-15  flex flex-col md:flex-row max-md:items-start gap-6 max-w-5xl mx-auto'>
 
 
             <div className='flex flex-col'>
-                <div className="flex flex-wrap gap-6 md:gap-10 max-md:gap-4 justify-center w-full">
+                <div className="flex flex-wrap gap-6 md:gap-10 max-md:gap-4 justify-center w-full ">
 
                     {/*from*/}
                     <div>
@@ -70,7 +75,7 @@ const Search = () => {
                     {/*passengers*/}
                     <div className='flex md:flex-col max-md:gap-2 max-md:items-center'>
                         <label htmlFor="passenger">Passengers</label>
-                        <input min={1} id="passenger" type="number" className=" rounded border border-gray-300 px-3 py-2 mt-1.5 text-base outline-none focus: border-b-cyan-700  max-w-16" placeholder="0" />
+                        <input min={1} id="passenger" type="number" className=" rounded border border-gray-300 px-3 py-2 mt-1.5 text-base outline-none focus: border-b-cyan-700  max-w-16" placeholder="0" value={TotalPassenger} onChange={(e) => setTotalPassenger(e.target.value)}/>
                     </div>
 
                     {/*class*/}

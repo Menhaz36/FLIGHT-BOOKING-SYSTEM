@@ -4,15 +4,18 @@ import { useEffect } from 'react';
 import axios from 'axios';
 import { useState } from 'react';
 import Flight_id from '../components/bookSeat/Flight_id';
+import { useLocation } from 'react-router-dom';
 
 const SeatSelect = () => {
 
     const { id } = useParams();
-    console.log("flight id yeh hn", id);
+    console.log("Selected Flight id", id);
+
     const [flight, setFlight] = useState(null);
     const [bookedSeats, setbookedSeats] = useState([]);
 
-
+    const location=useLocation();
+    console.log("data through params:",location.state);
     
 
     useEffect(() => {

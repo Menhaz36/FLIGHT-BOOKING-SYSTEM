@@ -1,72 +1,76 @@
-import React, { useState } from "react";
+import React from "react";
 
 //context api ->selectedSeats, setSelectedSeats->[{ label, category, price }],totalPrice, setTotalPrice
-
+import { UseBooking } from "../../contexts/Useboooking";
 const Seat_map = ({
-  layout = { rows: 6, seatsPerRow: 6, aisleAfterSeat: 3 },
-  seatTypes = {
-    available: "bg-gray-500/50",
-    booked: "bg-red-500/50",
-    selected: "bg-blue-500",
-  },
-  seatPricing = {
-    Business: { rows: [1, 2], price: 8000, style: `bg-[#2DD4BF10]` },
-    Premium: { rows: [3, 4], price: 5000, style: `bg-yellow-500/40` },
-    Economy: { rows: [5, 6], price: 3000, style: `bg-[#e879f940]` },
-  },
-  bookedSeats = ["1B", "2C"],
-  MaxSeatSelection = 3,
-  onSeatSelect = () => {},
-}) => {
-  // State to store selected seat objects
-  const [selectedSeats, setSelectedSeats] = useState([]); // [{ label, category, price }]
-  const [seatSelectionCount, setSeatSelectionCount] = useState(0);
-  const [totalPrice, setTotalPrice] = useState(0);
 
-  // Generate seat letters (A, B, C, ...)
-  const seatLetters = Array.from({ length: layout.seatsPerRow }, (_, i) =>
-    String.fromCharCode(65 + i)
-  );
+        layout = { rows: 6, seatsPerRow: 6, aisleAfterSeat: 3 },
+        seatTypes = {
+          available: "bg-gray-500/50",
+          booked: "bg-red-500/50",
+          selected: "bg-blue-500",
+        },
+        seatPricing = {
+          Business: { rows: [1, 2], price: 8000, style: `bg-[#2DD4BF10]` },
+          Premium: { rows: [3, 4], price: 5000, style: `bg-yellow-500/40` },
+          Economy: { rows: [5, 6], price: 3000, style: `bg-[#e879f940]` },
+        },
+        bookedSeats = ["1B", "2C"],
+        MaxSeatSelection = 3,
+       // onSeatSelect = () => {},
+      }) => {
 
-  // Get seat info (category and price) based on row number
-  const getSeatInfo = (rowNumber) => {
-    for (const [className, info] of Object.entries(seatPricing)) {
-      if (info.rows.includes(rowNumber)) {
-        return { className, price: info.price };
-      }
-    }
-    return { className: "Unknown", price: 0 };
-  };
+        const { bookingData, updateBookingData } = UseBooking();
 
-  // Handle seat selection and deselection
-  const handleSeatClick = (seatLabel) => {
-    if (bookedSeats.includes(seatLabel)) return;
+        // State to store selected seat objects
+       
+        const selectedSeats = bookingData.seats || []; // [{ label, category, price }]
+        const totalPrice = bookingData.totalPrice || 0;
+        const seatSelectionCount = selectedSeats.length;
 
-    const rowNumber = parseInt(seatLabel.match(/\d+/)[0]);
-    const { className, price } = getSeatInfo(rowNumber);
-    const seatObj = { label: seatLabel, category: className, price };
 
-    let updatedSelected;
-    let newTotal = totalPrice;
-    const isAlreadySelected = selectedSeats.some((s) => s.label === seatLabel);
+        // Generate seat letters (A, B, C, ...)
+        const seatLetters = Array.from({ length: layout.seatsPerRow }, (_, i) =>
+          String.fromCharCode(65 + i)
+        );
 
-    if (isAlreadySelected) {
-      // Remove seat
-      updatedSelected = selectedSeats.filter((s) => s.label !== seatLabel);
-      setSeatSelectionCount(seatSelectionCount - 1);
-      newTotal -= price;
-    } else {
-      // Add seat
-      if (seatSelectionCount >= MaxSeatSelection) return;
-      updatedSelected = [...selectedSeats, seatObj];
-      setSeatSelectionCount(seatSelectionCount + 1);
-      newTotal += price;
-    }
+        // Get seat info (category and price) based on row number
+        const getSeatInfo = (rowNumber) => {
+              for (const [className, info] of Object.entries(seatPricing)) {
+                if (info.rows.includes(rowNumber)) {
+                  return { className, price: info.price };
+                }
+              }
+              return { className: "Unknown", price: 0 };
+            };
 
-    setSelectedSeats(updatedSelected);
-    setTotalPrice(newTotal);
-    onSeatSelect(seatObj);
-  };
+        // Handle seat selection and deselection
+         const handleSeatClick = (seatLabel) => {
+                if (bookedSeats.includes(seatLabel)) return;
+
+                const rowNumber = parseInt(seatLabel.match(/\d+/)[0]);
+                const { className, price } = getSeatInfo(rowNumber);
+                const seatObj = { label: seatLabel, category: className, price };
+
+                let updatedSelected;
+                const isAlreadySelected = selectedSeats.some((s) => s.label === seatLabel);
+
+                if (isAlreadySelected) {
+                  // Remove seat
+                  updatedSelected = selectedSeats.filter((s) => s.label !== seatLabel);
+                } else {
+                  // Add seat
+                  if (seatSelectionCount >= MaxSeatSelection) return;
+                  updatedSelected = [...selectedSeats, seatObj];
+                }
+
+                // Update context
+                updateBookingData({ seats: updatedSelected, totalPrice: updatedSelected.reduce((sum, s) => sum + s.price, 0) });
+
+                // Optional callback
+                // onSeatSelect(updatedSelected);
+          };
+
 
   return (
     <div className="p-2 w-full flex flex-col gap-2">
@@ -120,22 +124,21 @@ const Seat_map = ({
         {selectedSeats.length > 0 ? (
           <>
             <div className="text-left px-4">
-              <h3 className="font-bold  mb-2">Selected Seats:</h3>
+              <h3 className="font-semibold  mb-2">Selected Seats:</h3>
               {selectedSeats.map((s) => (
                 <div
                   key={s.label}
                   className="text-sm text-gray-200 flex justify-between"
                 >
-                  <span>
+                  <span className="font-medium text-gray-500">
                     {s.label} — {s.category}
                   </span>
-                  <span>₹{s.price}</span>
+                  <span className="font-medium text-gray-900">₹{s.price}</span>
                 </div>
               ))}
             </div>
-
             <div className="mt-3 text-lg">
-              Total Price: <span className="text-yellow-300">₹{totalPrice}</span>
+              Total Price: <span className="text-gray-400">₹{totalPrice}</span>
             </div>
           </>
         ) : (

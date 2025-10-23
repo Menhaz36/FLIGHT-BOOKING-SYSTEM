@@ -8,6 +8,8 @@ import Home from './Pages/Home.jsx';
 import Login from './Pages/Login.jsx';
 import SeatSelect from './Pages/SeatSelect.jsx';
 
+import { BookingProvider } from './contexts/BookingContext.jsx';
+
 const router = createBrowserRouter([
   { path: '/', element: <AppLayout />,  
     children: [{
@@ -23,6 +25,8 @@ const router = createBrowserRouter([
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    <RouterProvider router={router}/>
+    <BookingProvider>
+      <RouterProvider router={router}/>
+    </BookingProvider>
   </StrictMode>,
-)
+);
