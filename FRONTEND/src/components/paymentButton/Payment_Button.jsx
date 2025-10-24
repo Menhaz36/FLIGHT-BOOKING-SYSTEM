@@ -1,9 +1,25 @@
 import React from 'react'
 import './PaymentButton.css'
+import { useNavigate } from "react-router-dom";
 
-const Payment_Button = () => {
+const Payment_Button = (
+
+) => {
+  const navigate = useNavigate();
+  const GotoPayment = () => {
+
+
+    
+    console.log("Navigating to payment page");
+    navigate('/payment',{ replace: true });
+    // Here you can navigate to the payment page or trigger payment process
+
+  }
+
   return (
-    <button className="button" style={{ "--clr": "#00ad54" }}>
+    <button className="button" style={{ "--clr": "#00ad54" }}
+      onClick={GotoPayment}
+    >
       <span className="button-decor"></span>
       <div className="button-content">
         <div className="button__icon">

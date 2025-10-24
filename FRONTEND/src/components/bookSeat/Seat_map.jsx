@@ -2,86 +2,88 @@ import React from "react";
 import { UseBooking } from "../../contexts/Useboooking";
 import { useEffect } from "react";
 import Payment_Button from "../paymentButton/Payment_Button";
+
 const Seat_map = ({
 
-  //props with default values
-  layout = { rows: 6, seatsPerRow: 6, aisleAfterSeat: 3 },
-  seatTypes = {
-    available: "bg-gray-500/50",
-    booked: "bg-red-500/50",
-    selected: "bg-blue-500",
-  },
-  seatPricing = {
-           Business: { rows: [1, 2], price: 8000, style: `bg-lime-400/20` },
-          Premium: { rows: [3, 4], price: 5000, style: `bg-blue-400/20` },
-          Economy: { rows: [5, 6], price: 3000, style: `bg-purple-400/20` },
-      },
-  bookedSeats = ["1B", "2C"],
-  MaxSeatSelection = 3,
-  // onSeatSelect = () => {},
-}) => {
+        //props with default values
+        layout = { rows: 6, seatsPerRow: 6, aisleAfterSeat: 3 },
+        seatTypes = {
+          available: "bg-gray-500/50",
+          booked: "bg-red-500/50",
+          selected: "bg-blue-500",
+        },
+        seatPricing = {
+                Business: { rows: [1, 2], price: 8000, style: `bg-lime-400/20` },
+                Premium: { rows: [3, 4], price: 5000, style: `bg-blue-400/20` },
+                Economy: { rows: [5, 6], price: 3000, style: `bg-purple-400/20` },
+            },
+        bookedSeats = ["1B", "2C"],
+        MaxSeatSelection = 3,
+        // onSeatSelect = () => {},
+    }) => {
 
-  const { bookingData, updateBookingData } = UseBooking();
+          const { bookingData, updateBookingData } = UseBooking();
+          
 
-
-  // const { id: flightId } = useParams(); 
-  //  //  Reset seats when flight changes
-   useEffect(() => {
-    updateBookingData({ seats: [], totalPrice: 0 });
-  }, []); //  runs when flight id changes
-
-
+          // const { id: flightId } = useParams(); 
+          //  //  Reset seats when flight changes
+          useEffect(() => {
+            updateBookingData({ seats: [], totalPrice: 0 });
+          }, []); //  runs when flight id changes
 
 
-  // State to store selected seat objects
-
-  const selectedSeats = bookingData.seats || []; // [{ label, category, price }]
-  const totalPrice = bookingData.totalPrice || 0;
-  const seatSelectionCount = selectedSeats.length;
 
 
-  // Generate seat letters (A, B, C, ...)
-  const seatLetters = Array.from({ length: layout.seatsPerRow }, (_, i) =>
-    String.fromCharCode(65 + i)
-  );
+          // State to store selected seat objects
 
-  // Get seat info (category and price) based on row number
-  const getSeatInfo = (rowNumber) => {
-    for (const [className, info] of Object.entries(seatPricing)) {
-      if (info.rows.includes(rowNumber)) {
-        return { className, price: info.price };
-      }
-    }
-    return { className: "Unknown", price: 0 };
-  };
+          const selectedSeats = bookingData.seats || []; // [{ label, category, price }]
+          const totalPrice = bookingData.totalPrice || 0;
+          const seatSelectionCount = selectedSeats.length;
 
-  // Handle seat selection and deselection
-  const handleSeatClick = (seatLabel) => {
-    if (bookedSeats.includes(seatLabel)) return;
 
-    const rowNumber = parseInt(seatLabel.match(/\d+/)[0]);
-    const { className, price } = getSeatInfo(rowNumber);
-    const seatObj = { label: seatLabel, category: className, price };
+          // Generate seat letters (A, B, C, ...)
+          const seatLetters = Array.from({ length: layout.seatsPerRow }, (_, i) =>
+            String.fromCharCode(65 + i)
+          );
 
-    let updatedSelected;
-    const isAlreadySelected = selectedSeats.some((s) => s.label === seatLabel);
+          // Get seat info (category and price) based on row number
+          const getSeatInfo = (rowNumber) => {
+            for (const [className, info] of Object.entries(seatPricing)) {
+              if (info.rows.includes(rowNumber)) {
+                return { className, price: info.price };
+              }
+            }
+            return { className: "Unknown", price: 0 };
+          };
 
-    if (isAlreadySelected) {
-      // Remove seat
-      updatedSelected = selectedSeats.filter((s) => s.label !== seatLabel);
-    } else {
-      // Add seat
-      if (seatSelectionCount >= MaxSeatSelection) return;
-      updatedSelected = [...selectedSeats, seatObj];
-    }
+          // Handle seat selection and deselection
+          const handleSeatClick = (seatLabel) => {
+            if (bookedSeats.includes(seatLabel)) return;
 
-    // Update context
-    updateBookingData({ seats: updatedSelected, totalPrice: updatedSelected.reduce((sum, s) => sum + s.price, 0) });
+            const rowNumber = parseInt(seatLabel.match(/\d+/)[0]);
+            const { className, price } = getSeatInfo(rowNumber);
+            const seatObj = { label: seatLabel, category: className, price };
 
-    // Optional callback
-    // onSeatSelect(updatedSelected);
-  };
+            let updatedSelected;
+            const isAlreadySelected = selectedSeats.some((s) => s.label === seatLabel);
 
+            if (isAlreadySelected) {
+              // Remove seat
+              updatedSelected = selectedSeats.filter((s) => s.label !== seatLabel);
+            } else {
+              // Add seat
+              if (seatSelectionCount >= MaxSeatSelection) return;
+              updatedSelected = [...selectedSeats, seatObj];
+            }
+
+            // Update context
+            updateBookingData({ seats: updatedSelected, totalPrice: updatedSelected.reduce((sum, s) => sum + s.price, 0) });
+
+            // Optional callback
+            // onSeatSelect(updatedSelected);
+          };
+
+          
 
   return (
     <div className="p-2 w-full flex flex-col gap-2">
@@ -154,7 +156,6 @@ const Seat_map = ({
              {/* ✅ Button appears only if totalPrice > 0 */}
             {totalPrice > 0 && (
               <Payment_Button
-                onClick={() => console.log("Proceeding to payment...")}
               >
                 Proceed to Payment
               </Payment_Button>

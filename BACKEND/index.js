@@ -82,6 +82,64 @@ app.get('/api/flight/:id', async (req, res) => {
     }
 });
 
+/*
+booking data structure:Object
+flight: {source: 'Delhi', destination: 'Mumbai', date: '2025-10-12', flightName: 'Indigo'}
+seats: (2) [{…}, {…}]
+selectedFlight: {flightID: 1, source: 'Delhi', destination: 'Mumbai', date: '2025-10-12', flightName: 'Indigo'}
+selectedflight: {flightID: 1, source: 'Delhi', destination: 'Mumbai', date: '2025-10-12', flightName: 'Indigo'}
+{flightID: 1, source: 'Delhi', destination: 'Mumbai', date: '2025-10-12', flightName: 'Indigo'}
+totalPrice: 16000
+user: Array(2)
+0
+{name: 'Menhaz', age: '21', gender: 'male'}
+1
+: 
+{name: 'Ruchika', age: '21', gender: 'female'}
+length
+: 
+2
+
+
+*/
+app.post("/api/bookings", async (req, res) => {
+  try {
+    const bookingData = req.body;
+    const { selectedFlight, seats } = bookingData;
+
+    if (!selectedFlight || !seats || seats.length === 0) {
+      return res.status(400).json({ error: "No flight or seats selected" });
+    }
+
+    const flightID = selectedFlight.flightID;
+
+    // Start transaction
+    await db.beginTransaction();
+
+    try {
+      const insertQuery = `
+        INSERT INTO seat (FlightID, SeatNumber, Category, Price, Status)
+        VALUES (?, ?, ?, ?, ?)
+        ON DUPLICATE KEY UPDATE Status = 'Booked'
+      `;
+
+      for (const seat of seats) {
+        const { label, category, price } = seat;
+        await db.query(insertQuery, [flightID, label, category, price, "Booked"]);
+      }
+
+      // Commit
+      await db.commit();
+      res.json({ message: "Seats booked successfully" });
+    } catch (err) {
+      await db.rollback();
+      throw err;
+    }
+  } catch (error) {
+    console.error("Error storing booking data:", error);
+    res.status(500).json({ error: "Failed to store booking data" });
+  }
+});
 
 // Start server
 app.listen(port, () => {

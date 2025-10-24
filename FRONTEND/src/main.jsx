@@ -1,6 +1,6 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
-import {BrowserRouter} from "react-router-dom"
+import { BrowserRouter } from "react-router-dom"
 import AppLayout from './Pages/layout/AppLayout.jsx';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import App from './App.jsx'
@@ -8,25 +8,27 @@ import Home from './Pages/Home.jsx';
 import Login from './Pages/Login.jsx';
 import SeatSelect from './Pages/SeatSelect.jsx';
 import UserDetails from './Pages/UserDetails.jsx';
-
+import Final from './Pages/Final/Final.jsx';
 import { BookingProvider } from './contexts/BookingContext.jsx';
 
 const router = createBrowserRouter([
-  { path: '/', element: <AppLayout />,  
+  {
+    path: '/', element: <AppLayout />,
     children: [{
       path: '/', element: <Home />
     },
-    {path: '/flight/:id',element: <UserDetails/>},
-    {path: '/flight/:id/seatselect', element: <SeatSelect/>},
-  ]
+    { path: '/flight/:id', element: <UserDetails /> },
+    { path: '/flight/:id/seatselect', element: <SeatSelect /> },
+    ]
   },
+  { path: '/payment', element: <Final /> },
   { path: '/Login', element: <Login /> },
 ]);
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <BookingProvider>
-      <RouterProvider router={router}/>
+      <RouterProvider router={router} />
     </BookingProvider>
   </StrictMode>,
 );
