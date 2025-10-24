@@ -3,10 +3,16 @@ import mysql from 'mysql2/promise';
 import cors from 'cors';
 
 const app = express();
-const port = 5000;
+const port = 5001;
 
 // Middleware
-app.use(cors());
+app.use(cors({
+    origin: 'http://localhost:5173', // React dev server
+    methods: ['GET','POST','PUT','DELETE','OPTIONS'], // allowed HTTP methods
+    allowedHeaders: ['Content-Type', 'Authorization'], // allowed headers
+    credentials: true // if you use cookies
+}));
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
@@ -14,7 +20,7 @@ app.use(express.urlencoded({ extended: false }));
 const db = await mysql.createConnection({
     host: 'localhost',
     user: 'root',
-    password: 'ruchika', // your MySQL root password
+    password: 'ruch004', // your MySQL root password
     database: 'FMS' // your database name
 });
 

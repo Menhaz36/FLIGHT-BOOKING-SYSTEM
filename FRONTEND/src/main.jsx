@@ -7,18 +7,17 @@ import App from './App.jsx'
 import Home from './Pages/Home.jsx';
 import Login from './Pages/Login.jsx';
 import SeatSelect from './Pages/SeatSelect.jsx';
-
+import UserDetails from './Pages/UserDetails.jsx';
 import { BookingProvider } from './contexts/BookingContext.jsx';
+import { UserProvider } from './context/userContext.jsx';
 
 const router = createBrowserRouter([
   { path: '/', element: <AppLayout />,  
-    children: [{
-      path: '/', element: <Home />
-    },
-    {
-      path: '/flight/:id', element: <SeatSelect/>
-    }
-  ]
+    children: [
+      {path: '/', element: <Home />},
+      {path: '/flight/:id',element: <UserDetails/>},
+      {path: '/flight/:id/seatselect', element: <SeatSelect/>}
+    ]
   },
   { path: '/Login', element: <Login /> },
 ]);
@@ -26,7 +25,9 @@ const router = createBrowserRouter([
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <BookingProvider>
-      <RouterProvider router={router}/>
+      <UserProvider>
+        <RouterProvider router={router}/>
+      </UserProvider>  
     </BookingProvider>
   </StrictMode>,
 );

@@ -11,9 +11,9 @@ const Seat_map = ({
           selected: "bg-blue-500",
         },
         seatPricing = {
-          Business: { rows: [1, 2], price: 8000, style: `bg-[#2DD4BF10]` },
-          Premium: { rows: [3, 4], price: 5000, style: `bg-yellow-500/40` },
-          Economy: { rows: [5, 6], price: 3000, style: `bg-[#e879f940]` },
+          Business: { rows: [1, 2], price: 8000, style: `bg-lime-400/20` },
+          Premium: { rows: [3, 4], price: 5000, style: `bg-blue-400/20` },
+          Economy: { rows: [5, 6], price: 3000, style: `bg-purple-400/20` },
         },
         bookedSeats = ["1B", "2C"],
         MaxSeatSelection = 3,

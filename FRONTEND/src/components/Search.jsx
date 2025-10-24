@@ -1,21 +1,25 @@
 import React from 'react';
 import axios from 'axios'; // run this-> npm i axios
+import { useContext } from 'react';
+import { UserContext } from '../context/userContext.jsx';
 
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 const Search = () => {
+    const { updatenumUser, numUser, setSelectedFlight } = useContext(UserContext);
     const [source, setSource] = useState('');
     const [destination, setDestination] = useState('');
     const [date, setDate] = useState('');
-    const [TotalPassenger, setTotalPassenger]= useState(1);
+    const [userInput, setuserInput] = useState(1); 
+
 
     const [flights, setFlights] = useState(null); // <-- null means "not searched yet"
 
     const SearchForFlights = async (source, destination, date) => {
         try {
             console.log('Searching flights with:', { source, destination, date });
-            const response = await axios.post('/api/search_flights', { source, destination, date });
+            const response = await axios.post('http://localhost:5001/api/search_flights', { source, destination, date });
             const flightsData = response.data[0];
             setFlights(flightsData);
         } catch (error) {
@@ -26,11 +30,11 @@ const Search = () => {
     const navigate=useNavigate();
 
 
-    const handleClick = (flightID) => {
-        navigate(`/flight/${flightID}`,{
-            state:{source,destination,date,TotalPassenger}
-        });
-         console.log('Flight ID clicked:', flightID);
+    const handleClick = (flight) => {
+        setSelectedFlight(flight);
+        updatenumUser(userInput);
+        navigate(`/flight/${flight.FlightID}`);
+        console.log('Flight clicked:', flight);
     }//here i can pass state 
    
     return (
@@ -75,7 +79,13 @@ const Search = () => {
                     {/*passengers*/}
                     <div className='flex md:flex-col max-md:gap-2 max-md:items-center'>
                         <label htmlFor="passenger">Passengers</label>
-                        <input min={1} id="passenger" type="number" className=" rounded border border-gray-300 px-3 py-2 mt-1.5 text-base outline-none focus: border-b-cyan-700  max-w-16" placeholder="0" value={TotalPassenger} onChange={(e) => setTotalPassenger(e.target.value)}/>
+                        <input min={1} id="passenger" type="number" className=" rounded border border-gray-300 px-3 py-2 mt-1.5 text-base outline-none focus: border-b-cyan-700  max-w-16" 
+                        value={userInput} 
+                        onChange={(e) =>{
+                            const val = Math.max(1, parseInt(e.target.value) || "1");
+                            setuserInput(val);
+                            updatenumUser(val);
+                        }} placeholder="0" />
                     </div>
 
                     {/*class*/}
@@ -114,7 +124,7 @@ const Search = () => {
                                 <div
                                     key={f.FlightID}
                                     className="p-2 border-b bg-blend-soft-light mix-blend-luminosity rounded-md mb-2 hover:bg-black cursor-pointer "
-                                    onClick={() => handleClick(f.FlightID)}
+                                    onClick={() => handleClick(f)}
                                 >
                                     <span className='font-semibold text-center hover:text-amber-50'>{f.FlightID}. {f.FlightName} : {f.Source} → {f.Destination} on {new Date(f.ArrivalTime).toLocaleString()}</span>
                                 </div>

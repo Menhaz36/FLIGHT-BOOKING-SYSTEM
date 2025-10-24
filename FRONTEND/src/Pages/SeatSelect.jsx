@@ -9,37 +9,33 @@ import { useLocation } from 'react-router-dom';
 const SeatSelect = () => {
 
     const { id } = useParams();
-    console.log("Selected Flight id", id);
+    const location = useLocation();
+    const flightFromState = location.state?.flight;
 
-    const [flight, setFlight] = useState(null);
-    const [bookedSeats, setbookedSeats] = useState([]);
+    const [flight, setFlight] = useState(flightFromState || null);
+    const [bookedSeats, setBookedSeats] = useState([]);
 
-    const location=useLocation();
-    console.log("data through params:",location.state);
-    
-
-    useEffect(() => {
-
-        // fetchFlight();
+   useEffect(() => {
+    if (!flightFromState && id) {
+        // fetch flight by id if state not available
         axios.get(`/api/flight/${id}`)
-            .then(response => {
-                console.log(response.data); // Success response
-                setFlight(response.data);
-                console.log("booked seat:", flight);
+        .then(res => {
+            setFlight(res.data);
+            setBookedSeats(res.data.bookedSeats || []);
             })
-            .catch(error => {
-                console.error(error); // Error handling
-            });
-
-    }, []);
+        .catch(err => console.error(err));
+            } else if (flightFromState) {
+                setBookedSeats(flightFromState.bookedSeats || []);
+            }
+        }, [id, flightFromState]);
 
     // Watch flight state
-    useEffect(() => {
-        if (flight) {
-            console.log("booked seat after state update:", flight);
-            setbookedSeats(flight.map(obj => obj.SeatNumber));
-        }
-    }, [flight]);
+    // useEffect(() => {
+    //     if (flight) {
+    //         console.log("booked seat after state update:", flight);
+    //         setBookedSeats(flight.bookedSeats || []);
+    //     }
+    // }, [flight]);
 
     // useEffect(() => {
     //   if (bookedSeats) {
@@ -53,7 +49,9 @@ const SeatSelect = () => {
 
     return (
         <div>
+            
         <Flight_id bookedSeats={bookedSeats}/>
+
         </div>
         
     )
