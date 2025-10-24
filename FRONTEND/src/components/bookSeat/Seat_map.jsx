@@ -1,8 +1,7 @@
 import React from "react";
 import { UseBooking } from "../../contexts/Useboooking";
 import { useEffect } from "react";
-
-
+import Payment_Button from "../paymentButton/Payment_Button";
 const Seat_map = ({
 
   //props with default values
@@ -154,12 +153,11 @@ const Seat_map = ({
             
              {/* ✅ Button appears only if totalPrice > 0 */}
             {totalPrice > 0 && (
-              <button
-                className="mt-4 bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition"
+              <Payment_Button
                 onClick={() => console.log("Proceeding to payment...")}
               >
                 Proceed to Payment
-              </button>
+              </Payment_Button>
             )}
           </>
         ) : (

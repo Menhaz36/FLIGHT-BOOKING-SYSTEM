@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 const Footer = () => {
     return (
         <>
-            <footer className="flex flex-col bg-black items-center justify-around w-full py-16 text-sm text-gray-800/70">
+            <footer className="flex flex-col bg-black items-center justify-end w-full py-16 text-sm text-gray-800/70">
 
                 <div className="flex items-center gap-4 mt-8 text-cyan-600">
                     <Link to="https://github.com/Menhaz36/FLIGHT-BOOKING-SYSTEM" className="hover:-translate-y-0.5 transition-all duration-300">

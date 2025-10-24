@@ -5,16 +5,21 @@ import { Outlet } from 'react-router-dom'
 
 const AppLayout = () => {
   return (
-    <>
-      <Navbar />
-      
-      {/* Wrapper for page content with padding-top to avoid being hidden under fixed navbar */}
-      <div className="pt-40 md:pt-24">
-        <Outlet />
-      </div>
+   <div className="flex flex-col min-h-screen">
+  
+  {/* Fixed Navbar */}
+    <Navbar />
 
-      <Footer />
-    </>
+    {/* Page Content */}
+    <div className="flex-grow pt-40 md:pt-24">
+      <Outlet />
+    </div>
+
+    {/* Footer (sticks to bottom) */}
+    <Footer />
+    
+  </div>
+
   )
 }
 
