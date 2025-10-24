@@ -1,62 +1,85 @@
-import React from 'react'
-import { useParams } from 'react-router-dom';
-import { useEffect } from 'react';
-import axios from 'axios';
-import { useState } from 'react';
-import Flight_id from '../components/bookSeat/Flight_id';
-import { useLocation } from 'react-router-dom';
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+import Flight_id from "../components/bookSeat/Flight_id";
+import { UseBooking } from "../contexts/Useboooking";
+import { useLocation } from "react-router-dom";
 
 const SeatSelect = () => {
+  const { bookingData } = UseBooking();
+  const selectedFlight = bookingData?.selectedFlight;
+  const location = useLocation();
 
-    const { id } = useParams();
-    console.log("Selected Flight id", id);
+  const totalPassenger = location.state?.TotalPassenger || 1;
+  
+  const [flight, setFlight] = useState(null);
+  const [bookedSeats, setBookedSeats] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-    const [flight, setFlight] = useState(null);
-    const [bookedSeats, setbookedSeats] = useState([]);
+  useEffect(() => {
+    // Determine flight ID from context or location
+    const flightId = selectedFlight?.flightID ?? location.state?.flightId;
+    if (!flightId) return;
+    console.log("Fetching data for Flight ID:", flightId);
+    console.log("totalPassenger in SeatSelect:", totalPassenger);
 
-    const location=useLocation();
-    console.log("data through params:",location.state);
-    
+    const fetchFlightData = async () => {
+      try {
+        const response = await axios.get(`/api/flight/${flightId}`);
+        const flightData = response.data;
 
-    useEffect(() => {
+        setFlight(flightData);
 
-        // fetchFlight();
-        axios.get(`/api/flight/${id}`)
-            .then(response => {
-                console.log(response.data); // Success response
-                setFlight(response.data);
-                console.log("booked seat:", flight);
-            })
-            .catch(error => {
-                console.error(error); // Error handling
-            });
+        // Map booked seats
+        // Assuming your API returns only booked seats
+        const booked = flightData?.map(seat => seat.SeatNumber) ?? [];
+        setBookedSeats(booked);
 
-    }, []);
+        console.log("Flight ID requested:", flightId);
+        console.log("Booked seat response:", flightData);
+      } catch (error) {
+        console.error("Error fetching flight:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-    // Watch flight state
-    useEffect(() => {
-        if (flight) {
-            console.log("booked seat after state update:", flight);
-            setbookedSeats(flight.map(obj => obj.SeatNumber));
-        }
-    }, [flight]);
+    fetchFlightData();
+  }, [selectedFlight, location.state]);
 
-    // useEffect(() => {
-    //   if (bookedSeats) {
-    //     console.log("booked seat", bookedSeats);
-    //   }
-    // }, [bookedSeats]);
-
-    if (!flight) return <p className='text-lg font-stretch-50%'>No seat available</p>;
-    //extracting booked seat from response
-    // setbookedSeats(flight.)
-
+  if (!selectedFlight) {
     return (
-        <div>
-        <Flight_id bookedSeats={bookedSeats}/>
-        </div>
-        
-    )
-}
+      <p className="text-lg text-center text-red-500 mt-10">
+        Please select a flight first.
+      </p>
+    );
+  }
 
-export default SeatSelect
+  if (loading) {
+    return (
+      <p className="text-lg text-center text-gray-600 mt-10">
+        Loading flight seats...
+      </p>
+    );
+  }
+
+  if (!flight?.length) {
+    return (
+      <p className="text-lg text-center text-gray-600 mt-10">
+        No seats available for this flight.
+      </p>
+    );
+  }
+
+  return (
+      <>
+      {/* <h1 className="text-2xl font-bold text-center mb-6">
+        Seat Selection - {selectedFlight.flightName}
+      </h1> */}
+
+      
+        <Flight_id bookedSeats={bookedSeats} MaxSeatSelection={totalPassenger} />
+      </>
+  );
+};
+
+export default SeatSelect;

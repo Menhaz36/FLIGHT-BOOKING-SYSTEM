@@ -5,6 +5,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 const Search = () => {
+    
     const [source, setSource] = useState('');
     const [destination, setDestination] = useState('');
     const [date, setDate] = useState('');
@@ -26,10 +27,13 @@ const Search = () => {
     const navigate=useNavigate();
 
 
-    const handleClick = (flightID) => {
-        navigate(`/flight/${flightID}`,{
-            state:{source,destination,date,TotalPassenger}
-        });
+    const handleClick = (flightID, flightName) => {
+        navigate(`/flight/${flightID}`, {
+            state: {
+                    selectedFlight: { flightID, source, destination, date, flightName }, // nested flight object
+                     TotalPassenger
+                    }
+            }); 
          console.log('Flight ID clicked:', flightID);
     }//here i can pass state 
    
@@ -114,7 +118,7 @@ const Search = () => {
                                 <div
                                     key={f.FlightID}
                                     className="p-2 border-b bg-blend-soft-light mix-blend-luminosity rounded-md mb-2 hover:bg-black cursor-pointer "
-                                    onClick={() => handleClick(f.FlightID)}
+                                    onClick={() => handleClick(f.FlightID,f.FlightName)}
                                 >
                                     <span className='font-semibold text-center hover:text-amber-50'>{f.FlightID}. {f.FlightName} : {f.Source} → {f.Destination} on {new Date(f.ArrivalTime).toLocaleString()}</span>
                                 </div>

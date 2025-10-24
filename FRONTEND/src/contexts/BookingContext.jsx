@@ -5,7 +5,7 @@ import { setItem, getItem, removeItem } from "../utils/localStorage";
 export const BookingContext = createContext();
 
 export const BookingProvider = ({ children }) => {
-    const defaultBooking = { user: {}, seats: [], totalPrice: 0 };
+    const defaultBooking = { user: {}, selectedFlight: [], seats: [], totalPrice: 0 };
 
     const [bookingData, setBookingData] = useState(() => {
         return getItem("bookingData") || defaultBooking;
