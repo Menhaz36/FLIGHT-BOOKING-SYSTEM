@@ -1,9 +1,12 @@
 import express from 'express';
 import mysql from 'mysql2/promise';
 import cors from 'cors';
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 const app = express();
-const port = 5001;
+const port = process.env.PORT || 5001;
 
 // Middleware
 app.use(cors());
@@ -13,9 +16,9 @@ app.use(express.urlencoded({ extended: false }));
 // MySQL connection
 const db = await mysql.createConnection({
     host: 'localhost',
-    user: 'root',
-    password: 'ruch004', // your MySQL root password
-    database: 'FMS' // your database name
+    user: process.env.DB_USER || 'root',
+    password: process.env.DB_PASSWORD || 'ruch004',
+    database: process.env.DB_NAME || 'FMS' // your database name
 });
 
 console.log('✅ Connected to MySQL database');

@@ -10,8 +10,6 @@ const Final = () => {
 
     console.log(bookingData);
 
-    //since now i got all the booking data here i can show the final summary of the booking
-
     //will directly store the booking data to the backend from here 
     useEffect(() => {
         // Make an API call to store booking data

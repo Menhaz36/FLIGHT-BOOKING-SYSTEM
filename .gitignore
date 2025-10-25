@@ -1,8 +1,7 @@
 node_modules/
 dist/
 build/
-.env
-.env.*
+
 .DS_Store
 Thumbs.db
 /.idea/
@@ -16,12 +15,19 @@ coverage/
 /.cache/
 *.local
 
+
 # Vite
 /.vite/
 public/build/
 
 # Mac
 .DS_Store
+
+
+#dotenv
+.env
+.env.*
+
 
 # Windows
 Thumbs.db
